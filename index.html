@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Shine Your Path</title>
+
+  <link rel="stylesheet" type="text/css" href="style.css">
+
+  <script src="libraries/p5.min.js"></script>
+  <script src="libraries/p5.sound.min.js"></script>
+
+
+</head>
+
+<body>
+  <main id="main" class="before">
+    <hgroup id="title" class="">
+      <h1>Shine the Path</h1>
+      <h2> Infographic CoDesign Workshop</h2>
+    </hgroup>
+
+    <section id="game_container" class="">
+      <canvas id="game"></canvas>
+      <div id="initial_screen" class="game_screen">
+        <p id="control_intro">Controls: Use left⬅️, right➡️, up⬆️, down⬇️ on the keyboard to move the character😐. </p>
+        <p id="goal_intro">Goal: Help them reach the dumpling🥟!</p>
+        <p id="buttons_container-start" class="buttons_container">
+          <button id="start_button" class="button" onclick="startGame()" type="button" title="play the game">start
+            ▶️</button>
+          <button id="skip_button" class="button" onclick="skipGame()" type="button" title="skip the game">skip
+            ⏏️</button>
+          <!-- <button id="vol_button" class="button" onclick="toggleVol()" type="button" title="turn on/off sound">🔇</button> -->
+        </p>
+      </div>
+      <div id="pause_screen" class="game_screen">
+        <p>Navigating in an invisible map is difficult. Try with some help?</p>
+        <button id="new_round_button" class="button" onclick="newRoundGame()" type="button"
+          title="restart the game in a different way">start over ↩️</button>
+      </div>
+      <!-- <button class="button" onclick="skipGame()" type="button" title="skip the game">skip</button> -->
+    </section>
+    <!-- 
+    <section id="initial_screen" class="">
+      <p id="control_intro">Controls: Use left, right, up, down on the keyboard to move the character. </p>
+      <p id="goal_intro">Goal: Help them reach the dumpling!</p>
+      <p id="buttons_container-start" class="buttons_container">
+        <button id="start_button" class="button" onclick="startGame()" type="button" title="play the game">start
+          ▶️</button>
+        <button id="skip_button" class="button" onclick="skipGame()" type="button" title="skip the game">skip
+          ⏏️</button>
+      </p>
+
+    </section> -->
+
+
+
+    <section id="poster" class="">
+      <!-- <p>😄</p> -->
+      <p id="description">
+        Design flow chart for newcomers. Some information and explanation about it - to be added.</p>
+      <p>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe quia asperiores quod ut ipsa quaerat dolor nihil,
+        nobis obcaecati a vel iste molestiae hic non ipsum, quam vitae provident accusamus!
+      </p>
+      <p id="time">
+        When: 12th, March</p>
+      <p id="location">
+        Where: Room45, 67 Address St.
+      </p>
+      <p id="actions">
+        <button class="button" onclick=" restartGame()" type="button" title="play the game again">restart 🔁</button>
+        <a class="button" href="#" title="sorry, not available now. come back later!">register 🙋‍♀️</a>
+        <!-- <button onclick="" type="button" title="play the game again">save the poster</button> -->
+        <a class="button" href="mailto:#" title="send this link to others">invite friends 🤝</a>
+      </p>
+    </section>
+
+  </main>
+
+  <script>
+
+    // ------ setting ------
+    const
+      scale = 0.75,
+      pixelRd = 20 * scale,
+      pixelSize = pixelRd * 2,
+      blockScale = 3,
+      blockSize = pixelSize * blockScale,
+      playerSize = 20 * scale,
+      distance = pixelRd + playerSize,
+      rewardSize = 20 * scale,
+      canvasSize = [960 * scale, 960 * scale],
+      startPoint = [playerSize + pixelSize, canvasSize[1] - playerSize - pixelSize],
+      endPoint = [canvasSize[0] - playerSize - pixelSize, playerSize + pixelSize];
+    const speed = 8 * scale; // has to < pixelRd/2, tested to get 8
+    const winningArea = [[endPoint[0] - 10 * scale, endPoint[0] + 10 * scale], [endPoint[1] - 10 * scale, endPoint[1] + 10 * scale]];
+
+    // npc
+    const npcIcons = ['👩', '👨', '👩‍🦱', '👩‍🦰', '👨‍🦳', '🧑‍🦱', '🧑‍🦰'];
+    const npcViewRd = 150;
+    const npcNumber = Math.ceil(canvasSize[0] / npcViewRd * 1.2);
+
+
+    // colours
+    const
+      // bgColour = [230, 230, 230],
+      bgColour = [10, 10, 10],
+      brickColour = [150, 80, 80],
+      brickEdgeColour = [30, 16, 16];
+
+    // player
+    const playerInitialHealth = 120;
+
+
+    // block shape
+    const blockShapes = [
+      [[0, 1], [1, 1], [2, 1]],
+      [[1, 0], [1, 1], [1, 2]],
+      [[2, 0], [2, 1], [2, 2], [1, 2], [0, 2]],
+      [[0, 0], [0, 1], [0, 2], [1, 2], [2, 2]],
+      [[0, 0], [0, 1], [0, 2], [1, 0], [2, 0]],
+      [[0, 0], [2, 1], [2, 2], [1, 0], [2, 0]]
+    ]
+
+    // start over msg
+    const newRound = 'Navigating in an invisible map is difficult. Try with some help?';
+
+
+    // ------ variables ------
+    let playerX = startPoint[0], playerY = startPoint[1];
+    let player;
+    let playerStatus;
+    let playerHealth = playerInitialHealth;
+    // about levels
+    let brickMap = [];
+    let path = [[endPoint[0], endPoint[1]], [startPoint[0], startPoint[1]]];
+    // the blocks
+    let blocks = [];
+    let blockMap = []; // not sure useful
+    let mapSize;
+    // for the player
+    let isBlocked_toR = false,
+      isBlocked_toL = false,
+      isBlocked_toU = false,
+      isBlocked_toD = false;
+    let playerView;
+    // stage
+    let stage = 'start';
+    // let stage = 'win';
+    // let stage = 'round1';
+    // npc
+    let npcs = [];
+    let npcX, npcY;
+    let npcIndexes = [];
+    let canvasAbsPos;
+    let btnStartOver;
+
+    let current;
+
+    // ------ elements ------
+    const main = document.querySelector("main"), initialScreen = document.getElementById("initial_screen"),
+      poster = document.getElementById("poster"),
+      gameCon = document.getElementById("game_container"),
+      pauseScreen = document.getElementById("pause_screen");
+
+  </script>
+
+
+  <script src="map.js"></script>
+  <script src="stages.js"></script>
+  <script src="player.js"></script>
+  <script src="npc.js"></script>
+  <script src="poster.js"></script>
+  <script src="sketch.js"></script>
+</body>
+
+</html>

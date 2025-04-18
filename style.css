@@ -1,0 +1,197 @@
+@font-face {
+  font-family: "lexend";
+  src: url("assets/Lexend-VariableFont_wght.ttf");
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #101010;
+  font-size: 1rem;
+  overflow: hidden;
+  box-sizing: border-box;
+  font-family: lexend, sans-serif;
+  height: 100vh;
+}
+canvas {
+  display: block;
+  margin: auto;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+main {
+  width: 100%;
+  min-height: 720px;
+  height: 100%;
+  font-size: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  position: relative;
+}
+h1 {
+  text-align: center;
+  font-size: 6rem;
+  margin-bottom: 0;
+  transition: font-size 1s, color 1s;
+}
+h2 {
+  text-align: center;
+  font-size: 2rem;
+  margin-top: 0.5rem;
+  transition: font-size 1s, color 1s;
+}
+.buttons_container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.button {
+  font-size: 2rem;
+  font-family: lexend, sans-serif;
+  color: #fff;
+  padding: 0.5rem 2rem;
+  border-radius: 2.5rem;
+  margin: 0 2rem;
+  background: #555;
+  cursor: pointer;
+  text-decoration: none;
+}
+#game_container {
+  position: relative;
+  transition: opacity 2s ease-in 0.5s;
+}
+.game_screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 90%;
+  height: 60%;
+  background: rgba(10,10,10,0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 10% 5%;
+  border-radius: 50px;
+}
+.game_screen p {
+  margin-left: 4rem;
+  margin-right: 4rem;
+}
+#poster {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #101010;
+  padding: 1rem 10%;
+  opacity: 0;
+  min-height: 720px;
+}
+#player_view {
+  border-radius: 500px;
+  background: #fff;
+  z-index: -99;
+  transition: width, height 2s;
+}
+main.before {
+  color: #fff;
+}
+main.before #initial_screen {
+  display: flex;
+}
+main.before #game_container {
+  display: block;
+}
+main.before #pause_screen {
+  display: none;
+}
+main.before #poster {
+  opacity: 0;
+}
+main.playing,
+main.pause {
+  color: #fff;
+}
+main.playing #title h1,
+main.pause #title h1 {
+  font-size: 3rem;
+  margin: 2rem 0;
+}
+main.playing #title h2,
+main.pause #title h2 {
+  display: none;
+}
+main.playing #initial_screen,
+main.pause #initial_screen {
+  font-size: 1rem;
+  margin: 0;
+  position: relative;
+  margin-top: 1rem;
+}
+main.playing #initial_screen p,
+main.pause #initial_screen p {
+  margin: 0.5rem;
+}
+main.playing #start_button,
+main.pause #start_button {
+  display: none;
+}
+main.playing #skip_button,
+main.pause #skip_button {
+  font-size: 1rem;
+}
+main.playing #pause_screen,
+main.pause #pause_screen {
+  display: none;
+}
+main.playing #poster,
+main.pause #poster {
+  opacity: 0;
+}
+main.playing #game_container,
+main.pause #game_container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+main.pause #pause_screen {
+  display: flex;
+}
+main.pause #game_container {
+  display: flex;
+}
+main.after {
+  color: #101010;
+  background-color: #fff;
+  transition: background-color 2s ease-in 0.5;
+}
+main.after #initial_screen {
+  display: none;
+}
+main.after #game_container {
+  opacity: 0;
+  height: 0;
+}
+main.after #pause_screen {
+  display: none;
+}
+main.after #poster {
+  position: relative;
+  display: flex;
+  background: #fff;
+  opacity: 100%;
+  transition: opacity 2s ease-in 0.5s;
+}
+#player_view {
+  transition: width, height 2s ease-in 2s;
+}
+.hide {
+  display: none;
+}
